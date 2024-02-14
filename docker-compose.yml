@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+ web:
+  build: ./web
+  container_name: myimage
+  external_links: 
+     - db-pg:db-pg
+  volumes: 
+     - ./web/app:/app
+     - ./files:/files
+  ports: 
+     - "80:80"
+ database:
+  build: ./postgres/
+  image: "postgres"
+  container_name: db-pg
+  command: postgres -c 'max_connections=500'
+  ports: 
+     - "5432:5432"
+  environment:
+      POSTGRES_DB: "SLON"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+  volumes:
+    - ./data:/var/lib/postgresql/data
+#    - ./postgres/init.sql:/docker-entrypoint-initdb.d/
